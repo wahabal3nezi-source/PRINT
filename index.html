@@ -2,66 +2,35 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>لعبة الرسم والتخمين - نسخة المحترفين</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🎨 لعبة الرسم والتخمين - الوضع العرضي</title>
+    <!-- خط عربي احترافي -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
-
-        :root {
-            --bg-color: #0f172a;
-            --panel-bg: #1e293b;
-            --primary: #3b82f6;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --text-light: #f8fafc;
-            --text-dark: #0f172a;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Tajawal', sans-serif;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-light);
-            height: 100dvh; /* يدعم شاشات الايفون بدون ما ينزل تحت الشريط */
-            width: 100vw;
-            overflow: hidden; /* يمنع الشاشة من التجميد أو التحرك */
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(145deg, #1e2b3a 0%, #0f1722 100%);
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
             display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* رسالة إجبار المستخدم على الوضع العرضي */
-        #portrait-warning {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: #000;
-            color: #fff;
-            z-index: 9999;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            font-size: 24px;
-            padding: 20px;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* منع تمرير الصفحة */
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: pan-y pinch-zoom; /* السماح فقط بالتمرير الرأسي إذا لزم الأمر خارج اللعبة */
         }
-        #portrait-warning span { font-size: 60px; margin-bottom: 20px; }
-
-        @media (orientation: portrait) {
-            #portrait-warning { display: flex; }
-            .screen { display: none !important; }
-        }
-
-        /* التصميم الأساسي للشاشات */
+        
+        /* جميع الشاشات */
         .screen {
             display: none;
             width: 100%;
@@ -70,292 +39,326 @@
             align-items: center;
             justify-content: center;
             padding: 15px;
+            position: relative;
         }
-        .screen.active { display: flex; }
-
-        /* شاشة الإعدادات */
-        .setup-box {
-            background: var(--panel-bg);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            text-align: center;
-            width: 90%;
-            max-width: 500px;
+        .active {
+            display: flex;
         }
-        .setup-box h1 { margin-bottom: 20px; color: var(--primary); font-size: 32px; }
-        input {
-            width: 100%;
-            padding: 15px;
-            font-size: 20px;
-            margin-bottom: 15px;
-            border-radius: 12px;
-            border: 2px solid #334155;
-            background: #0f172a;
-            color: white;
-            text-align: center;
-            outline: none;
-            transition: 0.3s;
-        }
-        input:focus { border-color: var(--primary); }
         
-        button {
-            padding: 15px 30px;
-            font-size: 22px;
-            font-weight: bold;
-            border-radius: 12px;
+        /* شاشة الإعدادات */
+        #setup-screen {
+            background: linear-gradient(145deg, #2c3e50, #1a2634);
+        }
+        #setup-screen h1 {
+            font-size: clamp(30px, 8vw, 48px);
+            font-weight: 900;
+            margin-bottom: 30px;
+            color: #ffe484;
+            text-shadow: 0 3px 0 #b87c00;
+        }
+        input {
+            width: 90%;
+            max-width: 400px;
+            padding: 18px 20px;
+            font-size: 20px;
+            margin: 10px;
+            border-radius: 60px;
             border: none;
-            background-color: var(--primary);
+            background: #2d3e5a;
+            color: white;
+            font-family: 'Tajawal', sans-serif;
+            text-align: center;
+            box-shadow: inset 0 5px 5px rgba(0,0,0,0.3);
+        }
+        input::placeholder {
+            color: #a0b8d0;
+        }
+        button {
+            padding: 18px 40px;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 15px;
+            border-radius: 60px;
+            border: none;
+            background: linear-gradient(145deg, #00b09b, #96c93d);
             color: white;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-            transition: 0.2s;
+            box-shadow: 0 10px 0 #1a5a4b, 0 5px 20px rgba(0,0,0,0.3);
+            transition: 0.1s ease;
             touch-action: manipulation;
+            font-family: 'Tajawal', sans-serif;
         }
-        button:active { transform: scale(0.95); }
-
-        /* لوحة التحكم والنتائج */
-        .dashboard-container {
-            width: 100%;
-            max-width: 800px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
+        button:active {
+            transform: translateY(8px);
+            box-shadow: 0 2px 0 #1a5a4b, 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        /* شاشة لوحة التحكم (اختيار النقاط) */
+        #dashboard-screen {
+            background: linear-gradient(145deg, #1e2b3a, #10161e);
         }
         .scoreboard {
             display: flex;
             justify-content: space-between;
             width: 100%;
-            background: var(--panel-bg);
-            padding: 20px 40px;
-            border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            max-width: 600px;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 40px;
+            border: 2px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
         }
-        .team-score { text-align: center; width: 45%; }
-        .team-name-disp { font-size: 24px; color: #94a3b8; }
-        .team-pts { font-size: 45px; font-weight: 900; color: var(--success); }
-        
-        .turn-box { font-size: 28px; background: #334155; padding: 10px 30px; border-radius: 30px; font-weight: bold;}
-        .turn-box span { color: var(--warning); }
-
-        .points-row {
+        .team-score {
+            font-size: clamp(24px, 5vw, 32px);
+            font-weight: 700;
+            text-align: center;
+            color: #ffe484;
+        }
+        .team-score span:first-child {
+            font-size: 0.8em;
+            color: #b0c4de;
+            display: block;
+        }
+        .turn-indicator {
+            font-size: clamp(28px, 6vw, 36px);
+            margin-bottom: 30px;
+            color: #a3d8ff;
+            font-weight: 900;
+            text-shadow: 0 2px 0 #2d6a9f;
+            background: #1e2f40;
+            padding: 15px 30px;
+            border-radius: 60px;
+            border: 2px solid #ffe484;
+        }
+        .points-grid {
             display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
             gap: 15px;
             width: 100%;
-            justify-content: center;
+            max-width: 600px;
         }
         .points-btn {
-            flex: 1;
-            padding: 20px 10px;
-            font-size: 26px;
-            background: linear-gradient(135deg, #f59e0b, #ea580c);
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
+            font-size: clamp(28px, 6vw, 40px);
+            font-weight: 900;
+            padding: 25px 20px;
+            min-width: 180px;
+            flex: 1 1 180px;
+            background: linear-gradient(145deg, #ff8008, #ffc837);
+            box-shadow: 0 10px 0 #b85e00;
         }
-        .points-btn small { font-size: 14px; opacity: 0.9; font-weight: normal; }
+        .points-btn:active {
+            transform: translateY(8px);
+            box-shadow: 0 2px 0 #b85e00;
+        }
 
-        /* شاشة اللعبة الأساسية (مخصصة للعرض Layout) */
+        /* شاشة اللعبة (الرسم) */
         #game-screen {
-            flex-direction: column;
-            padding: 10px;
-            gap: 10px;
+            background: #1e293b;
+            justify-content: flex-start;
+            padding-top: 10px;
         }
         .game-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            background: var(--panel-bg);
-            padding: 10px 20px;
-            border-radius: 12px;
-            height: 60px;
-            flex-shrink: 0;
+            padding: 10px 15px;
+            font-size: clamp(18px, 4vw, 24px);
+            font-weight: 700;
+            background: #0f1a2b;
+            border-radius: 60px;
+            margin-bottom: 10px;
+            border: 2px solid #ffe484;
         }
-        .game-header div { font-size: 20px; font-weight: bold; }
-        #timer { font-size: 30px; color: var(--danger); font-weight: 900; }
-
-        .game-body {
-            display: flex;
+        #timer {
+            color: #ffb3b3;
+            background: #4a1e2c;
+            padding: 8px 20px;
+            border-radius: 50px;
+            border: 2px solid #ff6b6b;
+        }
+        #canvas-container {
             width: 100%;
-            flex-grow: 1; /* يأخذ المساحة المتبقية */
-            gap: 10px;
-            min-height: 0; /* مهم جداً عشان ما يخرب الـ Flex */
-        }
-
-        #canvas-wrapper {
-            flex-grow: 1;
-            background: #ffffff;
-            border-radius: 15px;
+            flex: 1 1 auto; /* يأخذ المساحة المتبقية */
+            min-height: 0; /* مهم جداً لـ flex */
+            background: #f0f4fa;
+            border-radius: 30px;
+            box-shadow: inset 0 0 0 3px #ffe484, 0 10px 20px black;
             position: relative;
             overflow: hidden;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+            touch-action: none; /* منع السحب والتمرير داخل اللوحة */
         }
-
-        /* إعدادات دقة الشاشة (4K Resolution) */
         canvas {
             width: 100%;
             height: 100%;
             display: block;
-            touch-action: none; /* أساسي للايباد */
             cursor: crosshair;
+            touch-action: none; /* الأهم للآيباد */
+            background: white;
         }
-
-        /* شريط الأدوات الجانبي */
-        .sidebar {
-            width: 70px;
-            background: var(--panel-bg);
-            border-radius: 15px;
+        .tools {
             display: flex;
-            flex-direction: column;
+            flex-wrap: wrap;
             align-items: center;
-            padding: 10px 0;
-            gap: 12px;
-            flex-shrink: 0;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+            padding: 8px;
+            background: #1e2f3f;
+            border-radius: 60px;
+            width: 100%;
+        }
+        .color-picker {
+            display: flex;
+            gap: 8px;
         }
         .color-btn {
             width: 45px; height: 45px; border-radius: 50%; 
-            border: 3px solid #cbd5e1;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            cursor: pointer;
-            transition: 0.2s;
+            border: 3px solid #fff; 
+            box-shadow: 0 5px 0 #333;
+            transition: 0.05s linear;
         }
-        .color-btn.active { border-color: var(--warning); transform: scale(1.1); }
+        .color-btn:active {
+            transform: scale(0.9);
+        }
         .clear-btn {
-            margin-top: auto;
-            width: 50px; height: 50px;
-            border-radius: 12px;
             background: #475569;
-            font-size: 14px;
-            padding: 0;
-            display: flex; align-items: center; justify-content: center;
+            color: white;
+            font-size: 18px;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: 700;
+            border: none;
+            box-shadow: 0 5px 0 #1e293b;
+            margin: 0;
         }
-
-        /* شريط الإجراءات (صح / خطأ) السفلي */
-        .actions-bar {
-            width: 100%;
-            height: 60px;
-            flex-shrink: 0;
+        .actions {
             display: flex;
             gap: 15px;
+            justify-content: center;
+            width: 100%;
+            margin-top: 5px;
         }
-        .actions-bar button {
-            flex: 1; margin: 0; font-size: 22px; display: flex; align-items: center; justify-content: center; gap: 10px;
+        .btn-correct {
+            background: linear-gradient(145deg, #2ecc71, #27ae60);
+            box-shadow: 0 7px 0 #1e8449;
+            flex: 1;
+            font-size: 22px;
+            padding: 18px 0;
         }
-        .btn-correct { background-color: var(--success); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
-        .btn-wrong { background-color: var(--danger); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); }
-
-        /* شاشات التراكب (الكلمة وانتهى الوقت) */
-        .overlay {
+        .btn-wrong {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            box-shadow: 0 7px 0 #a8231a;
+            flex: 1;
+            font-size: 22px;
+            padding: 18px 0;
+        }
+        #word-overlay {
             position: absolute;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.95);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 10;
-            text-align: center;
+            font-size: 40px;
+            z-index: 20;
+            border-radius: 30px;
         }
-        .overlay h1 { font-size: 60px; color: var(--warning); margin: 20px 0; }
-        .overlay p { font-size: 24px; color: #cbd5e1; }
-        
+        #the-word {
+            font-size: clamp(50px, 15vw, 100px);
+            font-weight: 900;
+            color: #ffe484;
+            text-shadow: 0 5px 0 #b87c00;
+            margin: 20px 0;
+        }
+        #word-overlay button {
+            font-size: 30px;
+            padding: 20px 40px;
+            background: #3498db;
+            box-shadow: 0 10px 0 #1f618d;
+        }
     </style>
 </head>
 <body>
 
-    <div id="portrait-warning">
-        <span>🔄</span>
-        يرجى تدوير الجهاز (الآيباد أو الآيفون) بالوضع العرضي للعب
-    </div>
-
+    <!-- شاشة الإعدادات -->
     <div id="setup-screen" class="screen active">
-        <div class="setup-box">
-            <h1>🎮 مسابقة الرسم</h1>
-            <input type="text" id="team1-name" placeholder="اسم الفريق الأول" value="الفريق 1">
-            <input type="text" id="team2-name" placeholder="اسم الفريق الثاني" value="الفريق 2">
-            <button style="width: 100%; margin-top: 10px;" onclick="startGame()">الدخول للعبة</button>
-        </div>
+        <h1>🎨 لعبة الرسم</h1>
+        <input type="text" id="team1-name" placeholder="اسم الفريق الأول" value="الفهود">
+        <input type="text" id="team2-name" placeholder="اسم الفريق الثاني" value="الصقور">
+        <button onclick="startGame()">🚀 ابدأ المسابقة</button>
     </div>
 
+    <!-- شاشة لوحة التحكم (اختيار النقاط) -->
     <div id="dashboard-screen" class="screen">
-        <div class="dashboard-container">
-            <div class="scoreboard">
-                <div class="team-score">
-                    <div class="team-name-disp" id="t1-name-display">الفريق 1</div>
-                    <div class="team-pts" id="t1-score">0</div>
-                </div>
-                <div style="width: 2px; background: #334155;"></div>
-                <div class="team-score">
-                    <div class="team-name-disp" id="t2-name-display">الفريق 2</div>
-                    <div class="team-pts" id="t2-score">0</div>
-                </div>
-            </div>
-            
-            <div class="turn-box">الدور على: <span id="current-turn-name"></span></div>
-            
-            <div class="points-row">
-                <button class="points-btn" onclick="startRound(200)">200 نقطة<small>60 ثانية</small></button>
-                <button class="points-btn" onclick="startRound(400)">400 نقطة<small>50 ثانية</small></button>
-                <button class="points-btn" onclick="startRound(600)">600 نقطة<small>40 ثانية</small></button>
-            </div>
+        <div class="scoreboard">
+            <div class="team-score"><span id="t1-name-display"></span><br><span id="t1-score">0</span></div>
+            <div class="team-score"><span id="t2-name-display"></span><br><span id="t2-score">0</span></div>
+        </div>
+        <div class="turn-indicator" id="current-turn-name"></div>
+        
+        <div class="points-grid">
+            <button class="points-btn" onclick="startRound(200)">200<br><small>60 ث</small></button>
+            <button class="points-btn" onclick="startRound(400)">400<br><small>50 ث</small></button>
+            <button class="points-btn" onclick="startRound(600)">600<br><small>40 ث</small></button>
         </div>
     </div>
 
+    <!-- شاشة اللعبة (الرسم) -->
     <div id="game-screen" class="screen">
-        
         <div class="game-header">
-            <div>الفريق: <span id="game-team" style="color: var(--primary);"></span></div>
-            <div id="timer">60</div>
-            <div>النقاط: <span id="game-points" style="color: var(--warning);"></span></div>
+            <div>⚔️ <span id="game-team"></span></div>
+            <div id="timer">⏳ <span>60</span>ث</div>
+            <div>🏆 <span id="game-points"></span></div>
         </div>
-
-        <div class="game-body">
-            <div id="canvas-wrapper">
-                <div id="word-overlay" class="overlay">
-                    <p>الكلمة المطلوبة هي:</p>
-                    <h1 id="the-word"></h1>
-                    <button onclick="startDrawingTimer()">بدأ الرسم ⏱️</button>
-                </div>
-
-                <div id="timeup-overlay" class="overlay" style="display: none;">
-                    <h1 style="color: var(--danger);">انتهى الوقت! ⏰</h1>
-                    <p id="answer-reveal" style="margin-bottom: 20px; font-size: 30px;"></p>
-                    <button onclick="endRound(false)" style="background: #475569;">العودة للوحة ↩️</button>
-                </div>
-
-                <canvas id="drawingBoard"></canvas>
+        
+        <div id="canvas-container">
+            <div id="word-overlay">
+                <p>🔮 الكلمة هي:</p>
+                <h1 id="the-word"></h1>
+                <button onclick="startDrawingTimer()">✏️ اضغط لبدء الرسم</button>
             </div>
+            <canvas id="drawingBoard"></canvas>
+        </div>
 
-            <div class="sidebar">
-                <div class="color-btn active" style="background: black;" onclick="setColor('black', this)"></div>
-                <div class="color-btn" style="background: red;" onclick="setColor('red', this)"></div>
-                <div class="color-btn" style="background: #10b981;" onclick="setColor('#10b981', this)"></div>
-                <div class="color-btn" style="background: #3b82f6;" onclick="setColor('#3b82f6', this)"></div>
-                <div class="color-btn" style="background: #f59e0b;" onclick="setColor('#f59e0b', this)"></div>
-                <button class="clear-btn" onclick="clearCanvas()">مسح</button>
+        <div class="tools">
+            <div class="color-picker">
+                <div class="color-btn" style="background: black;" onclick="setColor('black')"></div>
+                <div class="color-btn" style="background: red;" onclick="setColor('red')"></div>
+                <div class="color-btn" style="background: #2ecc71;" onclick="setColor('#2ecc71')"></div>
+                <div class="color-btn" style="background: blue;" onclick="setColor('blue')"></div>
+                <div class="color-btn" style="background: #f1c40f;" onclick="setColor('#f1c40f')"></div>
             </div>
+            <button class="clear-btn" onclick="clearCanvas()">🗑️ مسح</button>
         </div>
 
-        <div class="actions-bar" id="game-actions" style="visibility: hidden;">
-            <button class="btn-correct" onclick="endRound(true)">إجابة صحيحة ✅</button>
-            <button class="btn-wrong" onclick="endRound(false)">لم يعرفوا ❌</button>
+        <!-- أزرار الإجابة الصحيحة / الخاطئة (تظهر بعد بدء الرسم) -->
+        <div class="actions" id="game-actions" style="display: none;">
+            <button class="btn-correct" onclick="endRound(true)">✅ صح</button>
+            <button class="btn-wrong" onclick="endRound(false)">❌ خطأ</button>
         </div>
-
+        <div class="actions" id="timeup-actions" style="display: none;">
+            <button class="btn-wrong" onclick="showAnswerAndEnd()">⏰ انتهى الوقت</button>
+        </div>
     </div>
 
     <script>
-        // --- إعدادات اللعبة والبيانات ---
-        let teams = [{name: '', score: 0}, {name: '', score: 0}];
+        // --- إعدادات اللعبة ---
+        let teams = [
+            { name: 'الفهود', score: 0 },
+            { name: 'الصقور', score: 0 }
+        ];
         let currentTeamIndex = 0;
-        
+
         const words = {
-            200: ['بيت', 'شجرة', 'شمس'],
-            400: ['سيارة', 'عنب', 'طيارة'],
-            600: ['لابتوب', 'مستشفى', 'فضاء']
+            200: ['بيت', 'شمس', 'سمكة'],
+            400: ['سيارة', 'مطر', 'جبل'],
+            600: ['كمبيوتر', 'فيل', 'مصر']
         };
 
         let currentWord = "";
@@ -364,44 +367,52 @@
         let timerInterval;
         let canDraw = false;
 
-        // --- إعدادات الكانفاس (الرسم بدقة 4K) ---
+        // --- إعدادات الرسم (محسنة للآيباد) ---
         const canvas = document.getElementById('drawingBoard');
         const ctx = canvas.getContext('2d');
-        const wrapper = document.getElementById('canvas-wrapper');
         let isDrawing = false;
-        let lastX = 0;
-        let lastY = 0;
+        let lastX = 0, lastY = 0;
         let currentColor = 'black';
 
         function resizeCanvas() {
-            // أخذ حجم الكونتينر الحقيقي
-            const rect = wrapper.getBoundingClientRect();
-            // تقنية الـ High-DPI لشاشات الايفون والايباد عشان الرسم يصير حاد جداً
-            const dpr = window.devicePixelRatio || 1; 
-
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
+            const container = document.getElementById('canvas-container');
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
             
-            ctx.scale(dpr, dpr);
+            // إعادة تعيين إعدادات الفرشاة
+            ctx.lineWidth = 5;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-            ctx.lineWidth = 5;
             ctx.strokeStyle = currentColor;
         }
 
-        function getPointerPos(e) {
+        function getPos(e) {
             const rect = canvas.getBoundingClientRect();
+            let clientX, clientY;
+
+            if (e.touches) {
+                // حدث لمسي
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+                e.preventDefault(); // منع التمرير
+            } else {
+                // حدث ماوس (للاختبار)
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+
             return {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
+                x: clientX - rect.left,
+                y: clientY - rect.top
             };
         }
 
         function startDrawing(e) {
             if (!canDraw) return;
-            e.preventDefault();
+            e.preventDefault(); // مهم جداً للآيباد
+            
             isDrawing = true;
-            const pos = getPointerPos(e);
+            const pos = getPos(e);
             lastX = pos.x;
             lastY = pos.y;
             
@@ -409,52 +420,64 @@
             ctx.arc(lastX, lastY, ctx.lineWidth / 2, 0, Math.PI * 2);
             ctx.fillStyle = currentColor;
             ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
         }
 
         function draw(e) {
             if (!isDrawing || !canDraw) return;
             e.preventDefault();
-            const pos = getPointerPos(e);
+            
+            const pos = getPos(e);
             
             ctx.beginPath();
             ctx.moveTo(lastX, lastY);
             ctx.lineTo(pos.x, pos.y);
+            ctx.strokeStyle = currentColor;
             ctx.stroke();
             
             lastX = pos.x;
             lastY = pos.y;
         }
 
-        function stopDrawing() { isDrawing = false; }
+        function stopDrawing(e) {
+            if (e) e.preventDefault();
+            isDrawing = false;
+        }
 
-        canvas.addEventListener('pointerdown', startDrawing);
-        canvas.addEventListener('pointermove', draw);
-        canvas.addEventListener('pointerup', stopDrawing);
-        canvas.addEventListener('pointercancel', stopDrawing);
-        canvas.addEventListener('pointerout', stopDrawing);
+        // أحداث اللمس للآيباد والهاتف
+        canvas.addEventListener('touchstart', startDrawing, { passive: false });
+        canvas.addEventListener('touchmove', draw, { passive: false });
+        canvas.addEventListener('touchend', stopDrawing);
+        canvas.addEventListener('touchcancel', stopDrawing);
+        
+        // أحداث الماوس (للاختبار على الكمبيوتر)
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseleave', stopDrawing);
 
-        function setColor(color, element) { 
+        function setColor(color) {
             currentColor = color;
-            ctx.strokeStyle = currentColor; 
-            document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
+            ctx.strokeStyle = color;
+        }
+        
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
 
-        function clearCanvas() { 
-            // لازم نستخدم الابعاد الاصلية للمسح بسبب السكيل اللي سويناه فوق
-            const rect = wrapper.getBoundingClientRect();
-            ctx.clearRect(0, 0, rect.width, rect.height); 
-        }
-
-        // --- منطق التنقل بين الشاشات ---
+        // --- دوال اللعبة ---
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
 
         function startGame() {
-            teams[0].name = document.getElementById('team1-name').value || "الفريق 1";
-            teams[1].name = document.getElementById('team2-name').value || "الفريق 2";
+            teams[0].name = document.getElementById('team1-name').value || 'الفهود';
+            teams[1].name = document.getElementById('team2-name').value || 'الصقور';
+            teams[0].score = 0;
+            teams[1].score = 0;
+            currentTeamIndex = 0;
             updateDashboard();
             showScreen('dashboard-screen');
         }
@@ -464,32 +487,30 @@
             document.getElementById('t1-score').innerText = teams[0].score;
             document.getElementById('t2-name-display').innerText = teams[1].name;
             document.getElementById('t2-score').innerText = teams[1].score;
-            document.getElementById('current-turn-name').innerText = teams[currentTeamIndex].name;
+            document.getElementById('current-turn-name').innerText = `🎨 دور: ${teams[currentTeamIndex].name}`;
         }
 
         function startRound(points) {
             currentPoints = points;
-            if(points === 200) timeLeft = 60;
-            if(points === 400) timeLeft = 50;
-            if(points === 600) timeLeft = 40;
+            if (points === 200) timeLeft = 60;
+            else if (points === 400) timeLeft = 50;
+            else timeLeft = 40;
 
             const wordList = words[points];
             currentWord = wordList[Math.floor(Math.random() * wordList.length)];
 
             document.getElementById('game-team').innerText = teams[currentTeamIndex].name;
             document.getElementById('game-points').innerText = points;
-            document.getElementById('timer').innerText = timeLeft;
-            
-            // إظهار وإخفاء العناصر
+            document.getElementById('timer').querySelector('span').innerText = timeLeft;
             document.getElementById('the-word').innerText = currentWord;
+            
             document.getElementById('word-overlay').style.display = 'flex';
-            document.getElementById('timeup-overlay').style.display = 'none';
-            document.getElementById('game-actions').style.visibility = 'hidden';
+            document.getElementById('game-actions').style.display = 'none';
+            document.getElementById('timeup-actions').style.display = 'none';
             
             canDraw = false;
             showScreen('game-screen');
             
-            // مهم جداً: تأخير بسيط عشان المتصفح يرسم الشاشة بعدين نأخذ المقاسات بدقة 4K
             setTimeout(() => {
                 resizeCanvas();
                 clearCanvas();
@@ -498,12 +519,12 @@
 
         function startDrawingTimer() {
             document.getElementById('word-overlay').style.display = 'none';
-            document.getElementById('game-actions').style.visibility = 'visible'; // إظهار أزرار الإجابة
+            document.getElementById('game-actions').style.display = 'flex';
             canDraw = true;
             
             timerInterval = setInterval(() => {
                 timeLeft--;
-                document.getElementById('timer').innerText = timeLeft;
+                document.getElementById('timer').querySelector('span').innerText = timeLeft;
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
                     timeUp();
@@ -513,9 +534,13 @@
 
         function timeUp() {
             canDraw = false;
-            document.getElementById('game-actions').style.visibility = 'hidden';
-            document.getElementById('answer-reveal').innerText = "الكلمة كانت: " + currentWord;
-            document.getElementById('timeup-overlay').style.display = 'flex';
+            document.getElementById('game-actions').style.display = 'none';
+            document.getElementById('timeup-actions').style.display = 'flex';
+        }
+
+        function showAnswerAndEnd() {
+            alert(`😢 الإجابة كانت: ${currentWord}`);
+            endRound(false);
         }
 
         function endRound(isCorrect) {
@@ -526,26 +551,16 @@
                 teams[currentTeamIndex].score += currentPoints;
             }
 
-            // تبديل الدور
+            // تبديل الفريق
             currentTeamIndex = currentTeamIndex === 0 ? 1 : 0;
             updateDashboard();
             showScreen('dashboard-screen');
         }
 
-        // تحديث مقاسات الرسم إذا غير المستخدم حجم الشاشة أو الآيباد
+        // ضبط حجم الرسم عند تغيير اتجاه الشاشة
         window.addEventListener('resize', () => {
-            if(document.getElementById('game-screen').classList.contains('active')) {
-                // حفظ الرسمة الحالية
-                const tempCanvas = document.createElement('canvas');
-                const tCtx = tempCanvas.getContext('2d');
-                tempCanvas.width = canvas.width;
-                tempCanvas.height = canvas.height;
-                tCtx.drawImage(canvas, 0, 0);
-                
+            if (document.getElementById('game-screen').classList.contains('active')) {
                 resizeCanvas();
-                
-                // إعادة الرسمة عشان ما تنمسح إذا لف الشاشة
-                ctx.drawImage(tempCanvas, 0, 0, tempCanvas.width / (window.devicePixelRatio || 1), tempCanvas.height / (window.devicePixelRatio || 1));
             }
         });
     </script>
