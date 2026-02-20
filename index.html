@@ -1,744 +1,539 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>لعبة الرسم والتخمين</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>لعبة الرسم المحترفين | شاشة رسم كاملة</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
 
-    :root{
-      --bg:#2f3136;
-      --panel:#3a3d41;
-      --panel2:#2b2d31;
-      --card:#3c3f44;
-      --cardBorder:#2a2c30;
-      --accent:#ff7a1a;
-      --accent2:#ff8a2a;
-      --white:#ffffff;
-      --muted:#cfd3d8;
-      --danger:#ff4d4d;
-      --success:#00c08b;
-    }
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            height: 100dvh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    *{
-      box-sizing:border-box;
-      margin:0;
-      padding:0;
-      font-family:'Tajawal', sans-serif;
-      -webkit-touch-callout:none;
-      -webkit-user-select:none;
-      user-select:none;
-    }
+        /* شاشة تحذير الوضع الرأسي */
+        #portrait-warning {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #000;
+            color: #fff;
+            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 24px;
+            padding: 20px;
+        }
+        #portrait-warning span { font-size: 60px; margin-bottom: 20px; }
 
-    body{
-      background: var(--bg);
-      color:#fff;
-      height:100dvh;
-      width:100vw;
-      overflow:hidden;
-    }
+        @media (orientation: portrait) {
+            #portrait-warning { display: flex; }
+            .screen { display: none !important; }
+        }
 
-    /* منع الوضع الطولي */
-    #portrait-warning{
-      display:none;
-      position:fixed;
-      inset:0;
-      background:#000;
-      color:#fff;
-      z-index:9999;
-      align-items:center;
-      justify-content:center;
-      flex-direction:column;
-      text-align:center;
-      padding:24px;
-      font-size:22px;
-    }
-    #portrait-warning span{ font-size:64px; margin-bottom:16px; }
-    @media (orientation: portrait){
-      #portrait-warning{ display:flex; }
-      .screen{ display:none !important; }
-    }
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .screen.active { display: flex; }
 
-    .screen{
-      width:100%;
-      height:100%;
-      display:none;
-    }
-    .screen.active{ display:block; }
+        /* ========== شاشة اختيار الفئة (بنفس ستايل الصورة تماماً) ========== */
+        .dashboard-container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            padding: 15px;
+        }
 
-    /* ====== شاشة اختيار الفئة (ستايل مثل الصورة) ====== */
-    #dashboard-screen{
-      background: linear-gradient(180deg, #4a4c50 0%, #2f3136 100%);
-      padding:14px 18px;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            background: #1e293b;
+            padding: 25px 40px;
+            border-radius: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            border: 1px solid #334155;
+        }
+        .team-score { text-align: center; width: 45%; }
+        .team-name-disp { font-size: 26px; color: #94a3b8; font-weight: 700; }
+        .team-pts { font-size: 60px; font-weight: 900; color: #10b981; line-height: 1.2; }
 
-    .topbar{
-      height:54px;
-      border-radius:16px;
-      background: rgba(0,0,0,0.15);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:8px 12px;
-    }
+        .turn-box {
+            font-size: 32px;
+            background: #334155;
+            padding: 12px 50px;
+            border-radius: 60px;
+            font-weight: bold;
+            box-shadow: inset 0 -3px 0 #1e293b;
+        }
+        .turn-box span { color: #f59e0b; }
 
-    .topbar-left, .topbar-right{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      min-width:280px;
-    }
+        .points-row {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .points-btn {
+            flex: 1;
+            padding: 25px 10px;
+            font-size: 32px;
+            font-weight: 900;
+            background: linear-gradient(145deg, #f59e0b, #d97706);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            box-shadow: 0 10px 0 #92400e, 0 8px 20px rgba(245,158,11,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            touch-action: manipulation;
+        }
+        .points-btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 4px 0 #92400e, 0 8px 20px rgba(245,158,11,0.5);
+        }
+        .points-btn small {
+            font-size: 18px;
+            opacity: 0.9;
+            font-weight: normal;
+        }
 
-    .topbar-center{
-      flex:1;
-      text-align:center;
-      font-weight:900;
-      font-size:22px;
-      opacity:0.95;
-    }
+        /* ========== شاشة الرسم (فول سكرين - بس الأدوات الأساسية) ========== */
+        #game-screen {
+            padding: 0;  /* بدون أي حشو خارجي */
+            background: #ffffff; /* خلفية الكانفاس بيضاء */
+            position: relative;
+        }
 
-    .tb-btn{
-      background: transparent;
-      border: none;
-      color:#fff;
-      font-size:18px;
-      font-weight:700;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      cursor:pointer;
-      padding:8px 10px;
-      border-radius:12px;
-    }
-    .tb-btn:hover{ background: rgba(255,255,255,0.06); }
-    .tb-icon{
-      width:34px; height:34px;
-      border-radius:10px;
-      background: rgba(255,122,26,0.18);
-      border:1px solid rgba(255,122,26,0.35);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color: var(--accent);
-      font-weight:900;
-    }
+        /* حاوية الرسم تغطي الشاشة بالكامل */
+        #canvas-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            overflow: hidden;
+        }
 
-    .badge-turn{
-      margin-right:auto;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      color:#fff;
-      border:none;
-      border-radius:18px;
-      padding:10px 16px;
-      font-weight:900;
-      font-size:16px;
-      white-space:nowrap;
-    }
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            touch-action: none;  /* منع التمرير والزوم أثناء الرسم */
+            cursor: crosshair;
+        }
 
-    .grid-wrap{
-      flex:1;
-      background: rgba(0,0,0,0.10);
-      border-radius:18px;
-      padding:16px;
-      display:flex;
-      gap:14px;
-      min-height:0;
-    }
+        /* الأزرار الصغيرة (مسح + إظهار الإجابة) تظهر فوق الرسم بشكل أنيق */
+        .drawing-tools {
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            right: 25px;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            z-index: 20;
+            pointer-events: none; /* عشان اللمس يمر للرسم تحت، لكن الأزرار تضل قابلة للنقر */
+        }
+        .drawing-tools button {
+            pointer-events: auto;
+            padding: 16px 35px;
+            font-size: 26px;
+            font-weight: bold;
+            border: none;
+            border-radius: 60px;
+            background: #1e293b;
+            color: white;
+            box-shadow: 0 8px 0 #0f172a, 0 10px 25px rgba(0,0,0,0.3);
+            transition: 0.1s;
+            touch-action: manipulation;
+            cursor: pointer;
+            min-width: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 2px solid #475569;
+        }
+        .drawing-tools button:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #0f172a, 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .btn-clear { background: #475569; }
+        .btn-reveal { background: #3b82f6; }
 
-    .col{
-      width:28%;
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-      min-height:0;
-    }
-    .col.center{
-      width:44%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
+        /* تراكب الكلمة (يظهر قبل بدء الرسم) */
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(4px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            text-align: center;
+            padding: 20px;
+        }
+        .overlay h1 { font-size: 80px; color: #f59e0b; margin: 20px 0; }
+        .overlay p { font-size: 32px; color: #cbd5e1; }
+        .overlay button {
+            margin-top: 40px;
+            padding: 20px 50px;
+            font-size: 36px;
+            background: #10b981;
+            border: none;
+            border-radius: 80px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 8px 0 #047857;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .overlay button:active { transform: translateY(6px); box-shadow: 0 2px 0 #047857; }
 
-    .pick-card{
-      flex:1;
-      border-radius:18px;
-      background: #3a3d41;
-      border: 3px solid #2b2d31;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:44px;
-      font-weight:900;
-      cursor:pointer;
-      transition: transform .08s ease, background .15s ease;
-    }
-    .pick-card:active{ transform: scale(0.98); }
-    .pick-card:hover{ background:#42454a; }
+        /* تراكب انتهاء الوقت */
+        #timeup-overlay {
+            background: rgba(0,0,0,0.9);
+        }
+        #answer-reveal { font-size: 40px; color: #ef4444; }
 
-    .center-art{
-      width:100%;
-      height:100%;
-      border-radius:14px;
-      background: #cfe6ff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      position:relative;
-      overflow:hidden;
-      border: 3px solid #2b2d31;
-    }
-    .center-art svg{
-      width:min(70%, 520px);
-      height:auto;
-      filter: drop-shadow(0 10px 10px rgba(0,0,0,0.15));
-    }
-
-    .bottombar{
-      height:88px;
-      border-radius:18px;
-      background: rgba(0,0,0,0.16);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:10px 16px;
-      gap:16px;
-    }
-
-    .help-block{
-      width:34%;
-      display:flex;
-      align-items:center;
-      gap:14px;
-    }
-    .help-title{
-      font-size:22px;
-      font-weight:900;
-      opacity:0.9;
-    }
-    .help-icons{
-      display:flex;
-      gap:10px;
-      margin-right:10px;
-    }
-    .help-icon{
-      width:38px;height:38px;
-      border-radius:50%;
-      border:2px solid rgba(255,122,26,0.6);
-      background: rgba(255,122,26,0.12);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color: var(--accent);
-      font-weight:900;
-      opacity:0.85;
-    }
-
-    .score-wrap{
-      width:32%;
-      text-align:center;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:12px;
-    }
-    .brand{
-      font-weight:900;
-      font-size:26px;
-      opacity:0.95;
-      letter-spacing:0.3px;
-    }
-    .brand small{
-      display:block;
-      font-size:14px;
-      font-weight:700;
-      opacity:0.75;
-      margin-top:-4px;
-    }
-
-    .team-ctrl{
-      width:34%;
-      display:flex;
-      align-items:center;
-      justify-content:flex-end;
-      gap:12px;
-    }
-    .team-name{
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      border:none;
-      color:#fff;
-      font-weight:900;
-      font-size:18px;
-      border-radius:16px;
-      padding:10px 18px;
-      white-space:nowrap;
-    }
-    .counter{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      background: rgba(0,0,0,0.20);
-      border-radius:20px;
-      padding:8px 12px;
-      border:1px solid rgba(255,255,255,0.08);
-    }
-    .counter button{
-      width:34px;height:34px;
-      border-radius:10px;
-      border:none;
-      background: rgba(255,122,26,0.15);
-      color:#fff;
-      font-size:22px;
-      font-weight:900;
-      cursor:pointer;
-    }
-    .counter span{
-      width:38px;
-      text-align:center;
-      font-size:22px;
-      font-weight:900;
-    }
-
-    /* ====== شاشة الرسم (Full white + زرين فقط) ====== */
-    #draw-screen{
-      background:#111;
-      position:relative;
-      height:100%;
-      width:100%;
-    }
-
-    #canvas{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      background:#fff;
-      touch-action:none;
-      cursor:crosshair;
-      display:block;
-    }
-
-    .draw-controls{
-      position:absolute;
-      left:16px;
-      bottom:16px;
-      display:flex;
-      gap:12px;
-      z-index:5;
-    }
-
-    .ctrl-btn{
-      border:none;
-      border-radius:16px;
-      padding:14px 18px;
-      font-size:18px;
-      font-weight:900;
-      cursor:pointer;
-      color:#fff;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      box-shadow: 0 10px 22px rgba(0,0,0,0.25);
-    }
-    .ctrl-btn.secondary{
-      background: rgba(0,0,0,0.45);
-      border: 1px solid rgba(255,255,255,0.18);
-      box-shadow:none;
-    }
-    .ctrl-btn:active{ transform: scale(0.98); }
-
-    /* Overlay للكلمة + Overlay للإجابة */
-    .overlay{
-      position:absolute;
-      inset:0;
-      background: rgba(0,0,0,0.65);
-      z-index:10;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-      text-align:center;
-    }
-    .overlay-card{
-      width:min(720px, 94vw);
-      background: rgba(40,42,46,0.96);
-      border:1px solid rgba(255,255,255,0.10);
-      border-radius:18px;
-      padding:22px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
-    }
-    .overlay-card p{
-      font-size:20px;
-      opacity:0.9;
-      margin-bottom:10px;
-    }
-    .overlay-card h1{
-      font-size:54px;
-      color: #ffd08a;
-      margin:10px 0 18px;
-      font-weight:900;
-    }
-    .overlay-actions{
-      display:flex;
-      gap:12px;
-      justify-content:center;
-      flex-wrap:wrap;
-    }
-    .ov-btn{
-      border:none;
-      border-radius:14px;
-      padding:14px 18px;
-      font-size:18px;
-      font-weight:900;
-      cursor:pointer;
-      color:#fff;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-    }
-    .ov-btn.gray{
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.15);
-    }
-    .ov-btn.success{ background: var(--success); }
-    .ov-btn.danger{ background: var(--danger); }
-  </style>
+        /* مؤشر الوقت الصغير (يظهر فقط في وضع الرسم) */
+        .mini-timer {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #1e293b;
+            color: #ef4444;
+            font-size: 40px;
+            font-weight: 900;
+            padding: 8px 30px;
+            border-radius: 60px;
+            z-index: 30;
+            border: 2px solid #facc15;
+            box-shadow: 0 4px 0 #0f172a;
+            direction: ltr;
+        }
+    </style>
 </head>
-
 <body>
-  <div id="portrait-warning">
-    <span>🔄</span>
-    يرجى تدوير الجهاز للوضع العرضي للعب
-  </div>
 
-  <!-- ===== شاشة اختيار الفئة ===== -->
-  <div id="dashboard-screen" class="screen active">
-    <div class="topbar">
-      <div class="topbar-left">
-        <button class="tb-btn" onclick="exitGame()">
-          <span class="tb-icon">⟵</span>
-          الخروج
-        </button>
-        <button class="tb-btn" onclick="resetToDashboard()">
-          <span class="tb-icon">▦</span>
-          الرجوع للوحة
-        </button>
-        <button class="tb-btn" onclick="endAllGame()">
-          <span class="tb-icon">✖</span>
-          انتهاء اللعبة
-        </button>
-      </div>
-
-      <div class="topbar-center">القرآن | الجزء 6</div>
-
-      <div class="topbar-right">
-        <div class="badge-turn">دور فريق: <span id="turnTeamName"></span></div>
-      </div>
+    <div id="portrait-warning">
+        <span>🔄</span>
+        يرجى تدوير الجهاز للوضع العرضي
     </div>
 
-    <div class="grid-wrap">
-      <div class="col">
-        <div class="pick-card" onclick="startRound(200)">200</div>
-        <div class="pick-card" onclick="startRound(400)">400</div>
-        <div class="pick-card" onclick="startRound(600)">600</div>
-      </div>
-
-      <div class="col center">
-        <div class="center-art" aria-label="صورة وسط">
-          <!-- رسمه من عندي بدل شعار -->
-          <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M250 70c75 0 130 45 130 120 0 40-18 72-48 95 40 18 66 54 66 98 0 74-60 117-148 117-104 0-170-53-170-132 0-47 26-83 68-100-28-23-44-52-44-88 0-68 54-110 146-110Z" stroke="#111827" stroke-width="10" />
-            <path d="M170 210c35-38 75-52 126-52 39 0 70 10 92 28" stroke="#111827" stroke-width="10" stroke-linecap="round"/>
-            <path d="M148 332c28 34 66 50 122 50 58 0 102-18 130-54" stroke="#111827" stroke-width="10" stroke-linecap="round"/>
-            <path d="M188 270c0 18 14 32 32 32s32-14 32-32-14-32-32-32-32 14-32 32Z" fill="#111827"/>
-            <path d="M280 270c0 18 14 32 32 32s32-14 32-32-14-32-32-32-32 14-32 32Z" fill="#111827"/>
-            <path d="M210 420c20 12 44 18 72 18 30 0 56-8 78-24" stroke="#111827" stroke-width="10" stroke-linecap="round"/>
-          </svg>
+    <!-- شاشة اختيار الفئة (بنفس ستايل الصورة تماماً) -->
+    <div id="dashboard-screen" class="screen active">
+        <div class="dashboard-container">
+            <div class="scoreboard">
+                <div class="team-score">
+                    <div class="team-name-disp" id="t1-name-display">الفريق 1</div>
+                    <div class="team-pts" id="t1-score">0</div>
+                </div>
+                <div style="width: 2px; background: #334155;"></div>
+                <div class="team-score">
+                    <div class="team-name-disp" id="t2-name-display">الفريق 2</div>
+                    <div class="team-pts" id="t2-score">0</div>
+                </div>
+            </div>
+            
+            <div class="turn-box">الدور على: <span id="current-turn-name">الفريق 1</span></div>
+            
+            <div class="points-row">
+                <button class="points-btn" onclick="startRound(200)">200<small>60 ث</small></button>
+                <button class="points-btn" onclick="startRound(400)">400<small>50 ث</small></button>
+                <button class="points-btn" onclick="startRound(600)">600<small>40 ث</small></button>
+            </div>
         </div>
-      </div>
-
-      <div class="col">
-        <div class="pick-card" onclick="startRound(200)">200</div>
-        <div class="pick-card" onclick="startRound(400)">400</div>
-        <div class="pick-card" onclick="startRound(600)">600</div>
-      </div>
     </div>
 
-    <div class="bottombar">
-      <div class="help-block">
-        <div class="help-title">وسائل المساعدة</div>
-        <div class="help-icons">
-          <div class="help-icon">↺</div>
-          <div class="help-icon">☎</div>
-          <div class="help-icon">✋</div>
+    <!-- شاشة الرسم الكاملة (بدون أي عناصر إضافية إلا مسح + إظهار الإجابة) -->
+    <div id="game-screen" class="screen">
+        <div id="canvas-wrapper">
+            <!-- تراكب الكلمة قبل البدء -->
+            <div id="word-overlay" class="overlay">
+                <p>الكلمة المطلوبة</p>
+                <h1 id="the-word"></h1>
+                <button onclick="startDrawingTimer()">ابدأ الرسم</button>
+            </div>
+
+            <!-- تراكب انتهاء الوقت -->
+            <div id="timeup-overlay" class="overlay" style="display: none;">
+                <h1 style="color: #ef4444;">انتهى الوقت</h1>
+                <p id="answer-reveal" style="font-size: 50px; margin: 30px;"></p>
+                <button onclick="backToDashboard()" style="background: #475569; box-shadow: 0 8px 0 #2d3748;">العودة للوحة</button>
+            </div>
+
+            <!-- عنصر الوقت الصغير -->
+            <div class="mini-timer" id="timer">60</div>
+
+            <!-- أدوات الرسم: مسح + إظهار الإجابة فقط (بأسلوب احترافي) -->
+            <div class="drawing-tools">
+                <button class="btn-clear" onclick="clearCanvas()">🧽 مسح</button>
+                <button class="btn-reveal" onclick="revealAnswer()">🔍 إظهار الإجابة</button>
+            </div>
+
+            <canvas id="drawingBoard"></canvas>
         </div>
-      </div>
-
-      <div class="score-wrap">
-        <div class="brand">
-          مسابقة الرسم
-          <small>نمط احترافي</small>
-        </div>
-      </div>
-
-      <div class="team-ctrl">
-        <div class="team-name" id="teamBadge">فريق</div>
-        <div class="counter">
-          <button onclick="addScore(-1)">-</button>
-          <span id="teamScore">0</span>
-          <button onclick="addScore(+1)">+</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== شاشة الرسم: Full screen أبيض + زرين فقط ===== -->
-  <div id="draw-screen" class="screen">
-    <canvas id="canvas"></canvas>
-
-    <div class="draw-controls">
-      <button class="ctrl-btn secondary" onclick="clearCanvas()">مسح</button>
-      <button class="ctrl-btn" onclick="toggleAnswer()">اظهار الإجابة</button>
     </div>
 
-    <!-- Overlay الكلمة قبل بدء الرسم -->
-    <div id="wordOverlay" class="overlay">
-      <div class="overlay-card">
-        <p>الكلمة المطلوبة هي:</p>
-        <h1 id="wordText">—</h1>
-        <div class="overlay-actions">
-          <button class="ov-btn" onclick="beginDrawing()">بدء الرسم</button>
-          <button class="ov-btn gray" onclick="backToDashboard()">إلغاء</button>
-        </div>
-      </div>
-    </div>
+    <script>
+        // -------------------- إعدادات اللعبة --------------------
+        let teams = [
+            { name: 'الفريق 1', score: 0 },
+            { name: 'الفريق 2', score: 0 }
+        ];
+        let currentTeamIndex = 0; // 0 للفريق الأول, 1 للثاني
+        
+        // كلمات الفئات (حقيقية ومتنوعة)
+        const words = {
+            200: ['بيت', 'شجرة', 'شمس', 'قطة', 'سيارة'],
+            400: ['مدرسة', 'مطار', 'جسر', 'قمر', 'نخلة'],
+            600: ['غواصة', 'تلفاز', 'روضة أطفال', 'مكوك فضاء', 'حديقة حيوان']
+        };
 
-    <!-- Overlay الإجابة + تقييم (عشان النقاط) -->
-    <div id="answerOverlay" class="overlay" style="display:none;">
-      <div class="overlay-card">
-        <p>الإجابة:</p>
-        <h1 id="answerText">—</h1>
-        <div class="overlay-actions">
-          <button class="ov-btn success" onclick="finishRound(true)">صحيح ✅</button>
-          <button class="ov-btn danger" onclick="finishRound(false)">خطأ ❌</button>
-          <button class="ov-btn gray" onclick="backToDashboard()">العودة للوحة ↩️</button>
-        </div>
-      </div>
-    </div>
-  </div>
+        let currentWord = "";
+        let currentPoints = 0;
+        let timeLeft = 0;
+        let timerInterval = null;
+        let canDraw = false;      // هل يسمح بالرسم حالياً؟
 
-  <script>
-    // ===== بيانات اللعبة =====
-    const teams = [
-      { name: "فق", score: 0 },
-      { name: "تق", score: 0 }
-    ];
-    let currentTeamIndex = 0;
+        // -------------------- إعدادات الكانفاس (رسم عالي الدقة) --------------------
+        const canvas = document.getElementById('drawingBoard');
+        const ctx = canvas.getContext('2d');
+        const wrapper = document.getElementById('canvas-wrapper');
+        let isDrawing = false;
+        let lastX = 0, lastY = 0;
+        let currentColor = '#000000'; // سنستخدم اللون الأسود دائماً (يبقى الرسم بسيط)
 
-    const words = {
-      200: ['بيت', 'شجرة', 'شمس', 'قلم', 'باب', 'نخلة'],
-      400: ['سيارة', 'مطار', 'مكتبة', 'سفينة', 'مروحة', 'مدينة'],
-      600: ['مستشفى', 'هاتف ذكي', 'محطة وقود', 'قمر صناعي', 'مضمار سباق', 'طاقة شمسية']
-    };
+        // دقة عالية لشاشات الـ 4K والآيباد
+        function resizeCanvas() {
+            const rect = wrapper.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.lineWidth = 6;      // سماكة مناسبة للّمس
+            ctx.strokeStyle = currentColor;
+            ctx.fillStyle = currentColor;
+        }
 
-    let currentWord = "";
-    let currentPoints = 0;
+        // حفظ الرسمة وإعادة رسمها بعد تغيير الحجم (لو المستخدم دار الجهاز)
+        function preserveDrawing() {
+            if (!document.getElementById('game-screen').classList.contains('active')) return;
+            const tempCanvas = document.createElement('canvas');
+            const tCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            tCtx.drawImage(canvas, 0, 0);
+            resizeCanvas();
+            ctx.drawImage(tempCanvas, 0, 0, tempCanvas.width / (window.devicePixelRatio || 1), tempCanvas.height / (window.devicePixelRatio || 1));
+        }
 
-    // ===== عناصر UI =====
-    const dashboard = document.getElementById('dashboard-screen');
-    const drawScreen = document.getElementById('draw-screen');
-    const turnTeamName = document.getElementById('turnTeamName');
-    const teamBadge = document.getElementById('teamBadge');
-    const teamScore = document.getElementById('teamScore');
+        window.addEventListener('resize', () => {
+            preserveDrawing();
+        });
 
-    const wordOverlay = document.getElementById('wordOverlay');
-    const answerOverlay = document.getElementById('answerOverlay');
-    const wordText = document.getElementById('wordText');
-    const answerText = document.getElementById('answerText');
+        // أحداث الرسم باللمس والفأرة
+        function getPointerPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
 
-    function showScreen(id){
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-    }
+        function startDrawing(e) {
+            if (!canDraw) return;
+            e.preventDefault();
+            isDrawing = true;
+            const pos = getPointerPos(e);
+            lastX = pos.x;
+            lastY = pos.y;
+            
+            ctx.beginPath();
+            ctx.arc(lastX, lastY, ctx.lineWidth/2, 0, Math.PI*2);
+            ctx.fill();
+        }
 
-    function updateDashboard(){
-      const t = teams[currentTeamIndex];
-      turnTeamName.textContent = t.name;
-      teamBadge.textContent = t.name;
-      teamScore.textContent = t.score;
-    }
+        function draw(e) {
+            if (!isDrawing || !canDraw) return;
+            e.preventDefault();
+            const pos = getPointerPos(e);
+            
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            
+            lastX = pos.x;
+            lastY = pos.y;
+        }
 
-    function addScore(delta){
-      teams[currentTeamIndex].score = Math.max(0, teams[currentTeamIndex].score + delta);
-      updateDashboard();
-    }
+        function stopDrawing() { isDrawing = false; }
 
-    function exitGame(){
-      // تقدر تعدلها إذا تبي
-      alert("الخروج");
-    }
+        canvas.addEventListener('pointerdown', startDrawing);
+        canvas.addEventListener('pointermove', draw);
+        canvas.addEventListener('pointerup', stopDrawing);
+        canvas.addEventListener('pointercancel', stopDrawing);
+        canvas.addEventListener('pointerout', stopDrawing);
 
-    function resetToDashboard(){
-      showScreen('dashboard-screen');
-    }
+        // مسح الكانفاس بالكامل
+        function clearCanvas() {
+            if (!canDraw) return; // فقط في وضع الرسم
+            const rect = wrapper.getBoundingClientRect();
+            ctx.clearRect(0, 0, rect.width, rect.height);
+        }
 
-    function endAllGame(){
-      teams[0].score = 0;
-      teams[1].score = 0;
-      currentTeamIndex = 0;
-      updateDashboard();
-      showScreen('dashboard-screen');
-    }
+        // إظهار الإجابة (نفس وظيفة الإنهاء بدون احتساب نقاط)
+        function revealAnswer() {
+            if (!canDraw) return; // إذا انتهى الوقت ما يشتغل
+            clearInterval(timerInterval);
+            canDraw = false;
+            document.getElementById('answer-reveal').innerText = "الكلمة: " + currentWord;
+            document.getElementById('word-overlay').style.display = 'none';
+            document.getElementById('timeup-overlay').style.display = 'flex';
+            document.querySelector('.drawing-tools').style.opacity = '0.5';
+        }
 
-    // ===== بدء راوند =====
-    function startRound(points){
-      currentPoints = points;
-      const list = words[points] || ['كلمة'];
-      currentWord = list[Math.floor(Math.random() * list.length)];
+        // -------------------- منطق اللعبة --------------------
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
 
-      // جهّز شاشة الرسم
-      wordText.textContent = currentWord;
-      answerText.textContent = currentWord;
-      answerOverlay.style.display = 'none';
-      wordOverlay.style.display = 'flex';
+        // تحديث لوحة النقاط (الأسماء والنتائج)
+        function updateDashboard() {
+            document.getElementById('t1-name-display').innerText = teams[0].name;
+            document.getElementById('t1-score').innerText = teams[0].score;
+            document.getElementById('t2-name-display').innerText = teams[1].name;
+            document.getElementById('t2-score').innerText = teams[1].score;
+            document.getElementById('current-turn-name').innerText = teams[currentTeamIndex].name;
+        }
 
-      showScreen('draw-screen');
+        // بدء جولة جديدة (اختيار فئة)
+        function startRound(points) {
+            currentPoints = points;
+            if (points === 200) timeLeft = 60;
+            else if (points === 400) timeLeft = 50;
+            else timeLeft = 40;
 
-      // جهّز الكانفاس
-      setTimeout(() => {
-        resizeCanvas();
-        clearCanvas();
-      }, 50);
-    }
+            const wordList = words[points];
+            currentWord = wordList[Math.floor(Math.random() * wordList.length)];
 
-    function backToDashboard(){
-      showScreen('dashboard-screen');
-      updateDashboard();
-    }
+            // تحديث شاشة اللعبة
+            document.getElementById('the-word').innerText = currentWord;
+            document.getElementById('timer').innerText = timeLeft;
+            document.getElementById('word-overlay').style.display = 'flex';
+            document.getElementById('timeup-overlay').style.display = 'none';
+            document.querySelector('.drawing-tools').style.opacity = '1';
+            
+            // منع الرسم حتى يضغط "ابدأ الرسم"
+            canDraw = false;
+            showScreen('game-screen');
+            
+            setTimeout(() => {
+                resizeCanvas();
+                clearCanvas();
+            }, 100);
+        }
 
-    function beginDrawing(){
-      // "بعد ما اطق الرسم": نخفي كل شيء، وتبقى شاشة بيضاء + زرين فقط
-      wordOverlay.style.display = 'none';
-      answerOverlay.style.display = 'none';
-      canDraw = true;
-    }
+        // بدء عداد الرسم (عند الضغط على "ابدأ الرسم")
+        function startDrawingTimer() {
+            document.getElementById('word-overlay').style.display = 'none';
+            canDraw = true;
 
-    function toggleAnswer(){
-      // زر "اظهار الإجابة" فقط
-      if(answerOverlay.style.display === 'none'){
-        answerOverlay.style.display = 'flex';
-        answerText.textContent = currentWord;
-        canDraw = false;
-      }else{
-        answerOverlay.style.display = 'none';
-        canDraw = true;
-      }
-    }
+            // تأكد من مسح أي مؤشر سابق
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timeUp();
+                }
+            }, 1000);
+        }
 
-    function finishRound(isCorrect){
-      if(isCorrect){
-        teams[currentTeamIndex].score += currentPoints;
-      }
-      // بدّل الدور
-      currentTeamIndex = currentTeamIndex === 0 ? 1 : 0;
-      updateDashboard();
-      showScreen('dashboard-screen');
-    }
+        // انتهاء الوقت (يظهر تراكب)
+        function timeUp() {
+            canDraw = false;
+            document.getElementById('answer-reveal').innerText = "الكلمة: " + currentWord;
+            document.getElementById('timeup-overlay').style.display = 'flex';
+            document.querySelector('.drawing-tools').style.opacity = '0.5';
+        }
 
-    // ===== Canvas (Full screen, High-DPI) =====
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d', { willReadFrequently: false });
+        // العودة للوحة التحكم من تراكب انتهاء الوقت (دون تغيير نقاط)
+        function backToDashboard() {
+            clearInterval(timerInterval);
+            // تبديل الدور تلقائياً حتى لو ما حصل إجابة
+            currentTeamIndex = currentTeamIndex === 0 ? 1 : 0;
+            updateDashboard();
+            showScreen('dashboard-screen');
+        }
 
-    let dpr = window.devicePixelRatio || 1;
-    let isDrawing = false;
-    let canDraw = false;
-    let lastX = 0, lastY = 0;
+        // هذه الدالة غير مستخدمة لكن نحتاجها لإنهاء الجولة من الأزرار الجانبية (إذا أردنا لاحقاً)
+        // ولكن حسب الطلب، لا يوجد أزرار صحيح/خطأ، فقط مسح وإظهار الإجابة.
+        // يمكن الاستغناء عنها.
 
-    function resizeCanvas(){
-      dpr = window.devicePixelRatio || 1;
+        // عند إظهار الإجابة، يتم التوجه إلى backToDashboard بعد قراءة الكلمة
+        // نضيف إمكانية إنهاء الجولة من زر "العودة للوحة" داخل overlay
 
-      // احفظ الرسم قبل تغيير الحجم
-      const temp = document.createElement('canvas');
-      temp.width = canvas.width;
-      temp.height = canvas.height;
-      temp.getContext('2d').drawImage(canvas, 0, 0);
+        // بداية اللعبة (نسميها من الكونسول أو نضيف زر) لكن الافتراضي أسماء الفرق ثابتة
+        // لتغيير الأسماء: أضفنا مدخلين في البداية حسب الصورة، لكن الصورة المرفقة فيها لوحة فقط.
+        // لذلك سأجعل أسماء الفرق قابلة للتعديل من متغيرات.
+        
+        // نضبط الأسماء الافتراضية من الصورة: الفريق الأول والفريق الثاني
+        teams[0].name = 'الأحمر';
+        teams[1].name = 'الأزرق';
+        updateDashboard();
 
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = Math.floor(rect.width * dpr);
-      canvas.height = Math.floor(rect.height * dpr);
+        // دالة لإعادة تعيين الأسماء (يمكن استدعاؤها من المتصفح)
+        window.setTeamName = function(team, name) {
+            if (team === 1) teams[0].name = name;
+            else teams[1].name = name;
+            updateDashboard();
+        }
 
-      // IMPORTANT: لا تسوي scale متكرر بدون reset
-      ctx.setTransform(1,0,0,1,0,0);
-      ctx.scale(dpr, dpr);
-
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.lineWidth = 6;
-      ctx.strokeStyle = '#000';
-
-      // رجّع الرسم (إذا فيه)
-      if(temp.width && temp.height){
-        ctx.drawImage(temp, 0, 0, temp.width / dpr, temp.height / dpr);
-      }
-    }
-
-    function clearCanvas(){
-      ctx.setTransform(1,0,0,1,0,0);
-      ctx.clearRect(0,0,canvas.width, canvas.height);
-      ctx.setTransform(1,0,0,1,0,0);
-      ctx.scale(dpr, dpr);
-    }
-
-    function getPos(e){
-      const rect = canvas.getBoundingClientRect();
-      return { x: e.clientX - rect.left, y: e.clientY - rect.top };
-    }
-
-    function pointerDown(e){
-      if(!canDraw) return;
-      e.preventDefault();
-      isDrawing = true;
-      const p = getPos(e);
-      lastX = p.x; lastY = p.y;
-
-      ctx.beginPath();
-      ctx.arc(lastX, lastY, ctx.lineWidth/2, 0, Math.PI*2);
-      ctx.fillStyle = '#000';
-      ctx.fill();
-    }
-
-    function pointerMove(e){
-      if(!isDrawing || !canDraw) return;
-      e.preventDefault();
-      const p = getPos(e);
-
-      ctx.beginPath();
-      ctx.moveTo(lastX, lastY);
-      ctx.lineTo(p.x, p.y);
-      ctx.stroke();
-
-      lastX = p.x; lastY = p.y;
-    }
-
-    function pointerUp(){
-      isDrawing = false;
-    }
-
-    canvas.addEventListener('pointerdown', pointerDown);
-    canvas.addEventListener('pointermove', pointerMove);
-    canvas.addEventListener('pointerup', pointerUp);
-    canvas.addEventListener('pointercancel', pointerUp);
-    canvas.addEventListener('pointerout', pointerUp);
-
-    window.addEventListener('resize', () => {
-      if(drawScreen.classList.contains('active')){
-        resizeCanvas();
-      }
-    });
-
-    // init
-    updateDashboard();
-  </script>
+        // نضمن أن الكانفاس ينضبط عند الدخول
+        // وأيضاً نمنع القوائم المنبثقة
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
 </body>
 </html>
